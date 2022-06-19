@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    .card {
+      padding: 8px;
+      width: 48%;
+      height: 300px;
+      border: 1px solid #000;
+      display: inline-block;
+    }
+    .head {
+      text-align: center;
+      padding: auto;
+      margin-bottom: 10px;
+    }
+    .image {
+      width: 45%;
+    }
+    .infocard {
+      width: 60%;
+      /* text-align: right; */
+    }
+  </style>
+  <body>
+    <div class="head">
+      <h1>Presenting you Github Users</h1>
+    </div>
+    <div class="head">
+      <input
+        type="text"
+        name="search"
+        id="search"
+        placeholder="Enter Username"
+      /><button onclick="searchUser()">Search</button>
+    </div>
+    <div id="container"></div>
+    <script>
+      var searchval;
+      // let allUsers = [];
+
+      function searchUser() {
+        searchval = document.getElementById("search").value;
+        let container = document.getElementById("container");
+        var url = "https://api.github.com/users/" + searchval;
+        fetch(url, {
+          method: "GET",
+        })
+          .then(function (response) {
+            if (response.status == '404') { 
+             
+              let template = `<div>
+                  <h1>User Not Found</h1>
+                  </div>
+                  <div>
+                    <h1>Please Check the Username Again</h1>
+                    </div>
+                `;
+              container.innerHTML = template;
+
+            } else {
+              return response.json();
+            }
+          })
+          .then(function (data) {
+            fetch(data.url, {
+              method: "GET",
+            })
+              .then(function (response) {
+                return response.json();
+              })
+              .then(function (userdata) {
+                let template = `<div class="card">
+          <img src="${userdata.avatar_url}" class ="image">
+                        <div class="infocard">Username: ${userdata.login}</div>
+                        <div class="infocard">Name: ${userdata.name}</div>
+                        <div class="infocard">Name: ${userdata.name}</div>
+                        <div class="infocard">ID: ${userdata.id}</div>
+                        <div class="infocard">Node ID: ${userdata.node_id}</div>
+                        <div class="infocard">GitHub Profile: <a href="${userdata.html_url}">${userdata.html_url}</a></div>
+                        <div class="infocard">Company: ${userdata.company}</div>
+                        <div class="infocard">Location: ${userdata.location}</div>
+                        <div class="infocard">Twitter Username: ${userdata.twitter_username}</div>
+                        <div class="infocard">Public Repos: ${userdata.public_repos}</div>
+                        <div class="infocard">Followers: ${userdata.followers}</div>
+                        <div class="infocard">Following: ${userdata.following}</div>
+                        <div class="infocard">Blog: <a href="${userdata.blog}">${userdata.blog}</a></div>
+
+        `;
+                // console.log(userdata);
+                container.innerHTML = template;
+              });
+          });
+      }
+
+      // console.log(searchval);
+
+      fetch("https://api.github.com/users", {
+        method: "GET",
+      })
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (data) {
+          //   console.log(data);
+          let container = document.getElementById("container");
+          console.log(data);
+          data.forEach((user) => {
+            fetch(user.url, {
+              method: "GET",
+            })
+              .then(function (response) {
+                return response.json();
+              })
+              .then(function (userdata) {
+                let template = `<div class="card">
+                        <img src="${userdata.avatar_url}" class ="image">
+                        <div class="infocard">Username: ${userdata.login}</div>
+                        <div class="infocard">Name: ${userdata.name}</div>
+                        <div class="infocard">ID: ${userdata.id}</div>
+                        <div class="infocard">Node ID: ${userdata.node_id}</div>
+                        <div class="infocard">GitHub Profile: <a href="${userdata.html_url}">${userdata.html_url}</a></div>
+                        <div class="infocard">Company: ${userdata.company}</div>
+                        <div class="infocard">Location: ${userdata.location}</div>
+                        <div class="infocard">Twitter Username: ${userdata.twitter_username}</div>
+                        <div class="infocard">Public Repos: ${userdata.public_repos}</div>
+                        <div class="infocard">Followers: ${userdata.followers}</div>
+                        <div class="infocard">Following: ${userdata.following}</div>
+                        <div class="infocard">Blog: <a href="${userdata.blog}">${userdata.blog}</a></div>
+                      </div>
+                `;
+                container.innerHTML = container.innerHTML + template;
+              });
+          });
+        });
+      // console.log(allUsers);Z
+    </script>
+  </body>
+</html>
